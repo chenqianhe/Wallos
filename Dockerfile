@@ -36,8 +36,8 @@ RUN dos2unix /etc/cron.d/cronjobs && \
     echo 'pm.max_children = 15' >> /usr/local/etc/php-fpm.d/zz-docker.conf && \
     echo 'pm.max_requests = 500' >> /usr/local/etc/php-fpm.d/zz-docker.conf
 
-# Expose port 80 for Nginx
-EXPOSE 80
+# Expose port 82820 for Nginx
+EXPOSE 8282
 
 ARG SOFTWARE_VERSION=1.20.0
 
