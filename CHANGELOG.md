@@ -1,5 +1,300 @@
 # Changelog
 
+## [2.45.2](https://github.com/ellite/Wallos/compare/v2.45.1...v2.45.2) (2025-02-05)
+
+
+### Bug Fixes
+
+* bug setting main currency for the first registered user ([c43b08a](https://github.com/ellite/Wallos/commit/c43b08aa4c45c907f82eb6afe37fd46aa5103654))
+* deprecation message ([c43b08a](https://github.com/ellite/Wallos/commit/c43b08aa4c45c907f82eb6afe37fd46aa5103654))
+* subscription progress above 100% for disabled subscriptions ([c43b08a](https://github.com/ellite/Wallos/commit/c43b08aa4c45c907f82eb6afe37fd46aa5103654))
+* typo on czech translation ([c43b08a](https://github.com/ellite/Wallos/commit/c43b08aa4c45c907f82eb6afe37fd46aa5103654))
+* use first currency on the list of currencies if user has not selected a main currency ([c43b08a](https://github.com/ellite/Wallos/commit/c43b08aa4c45c907f82eb6afe37fd46aa5103654))
+* use gd if imagick is not available ([c43b08a](https://github.com/ellite/Wallos/commit/c43b08aa4c45c907f82eb6afe37fd46aa5103654))
+
+## [2.45.1](https://github.com/ellite/Wallos/compare/v2.45.0...v2.45.1) (2025-01-28)
+
+
+### Bug Fixes
+
+* improve czech translation ([e2dc269](https://github.com/ellite/Wallos/commit/e2dc2696310159900c1f8fbe0a090e66b29b778d))
+* improve japanese translation ([#713](https://github.com/ellite/Wallos/issues/713)) ([e2dc269](https://github.com/ellite/Wallos/commit/e2dc2696310159900c1f8fbe0a090e66b29b778d))
+* improve traditional chinese translation ([e2dc269](https://github.com/ellite/Wallos/commit/e2dc2696310159900c1f8fbe0a090e66b29b778d))
+* setting pgid and puid for the container ([e2dc269](https://github.com/ellite/Wallos/commit/e2dc2696310159900c1f8fbe0a090e66b29b778d))
+
+## [2.45.0](https://github.com/ellite/Wallos/compare/v2.44.1...v2.45.0) (2025-01-19)
+
+
+### Features
+
+* add czech translations ([#701](https://github.com/ellite/Wallos/issues/701)) ([426fdfa](https://github.com/ellite/Wallos/commit/426fdfa5c79d32c7d5a0722a0590d39547cfd1fa))
+
+## [2.44.1](https://github.com/ellite/Wallos/compare/v2.44.0...v2.44.1) (2025-01-19)
+
+
+### Bug Fixes
+
+* error setting date of last exchange rates update ([#699](https://github.com/ellite/Wallos/issues/699)) ([d2f68c4](https://github.com/ellite/Wallos/commit/d2f68c457e9b1328caf983ddc6e2827430855aa6))
+
+## [2.44.0](https://github.com/ellite/Wallos/compare/v2.43.1...v2.44.0) (2025-01-12)
+
+
+### Features
+
+* allow notifications on due date ([87f148d](https://github.com/ellite/Wallos/commit/87f148d1745bec19f5713b8a367a3615871e6e33))
+
+
+### Bug Fixes
+
+* don't expose disabled notifications to ical feed ([87f148d](https://github.com/ellite/Wallos/commit/87f148d1745bec19f5713b8a367a3615871e6e33))
+* email notification test always sending to admins email ([87f148d](https://github.com/ellite/Wallos/commit/87f148d1745bec19f5713b8a367a3615871e6e33))
+
+## [2.43.1](https://github.com/ellite/Wallos/compare/v2.43.0...v2.43.1) (2025-01-12)
+
+
+### Bug Fixes
+
+* edit / delete subscription menu not accessible ([#689](https://github.com/ellite/Wallos/issues/689)) ([b668d37](https://github.com/ellite/Wallos/commit/b668d37d38f799ee0dda5a69a4824d03dd21e1bc))
+
+## [2.43.0](https://github.com/ellite/Wallos/compare/v2.42.2...v2.43.0) (2025-01-11)
+
+
+### Features
+
+* new api endpoint that returns the version ([ff13fcb](https://github.com/ellite/Wallos/commit/ff13fcb6547ec4a9c972a2c0f0b6f42d69620f8b))
+* option to show progress of subscription cycle ([ff13fcb](https://github.com/ellite/Wallos/commit/ff13fcb6547ec4a9c972a2c0f0b6f42d69620f8b))
+
+
+### Bug Fixes
+
+* currency symbol for monthly budget ([ff13fcb](https://github.com/ellite/Wallos/commit/ff13fcb6547ec4a9c972a2c0f0b6f42d69620f8b))
+
+## [2.42.2](https://github.com/ellite/Wallos/compare/v2.42.1...v2.42.2) (2024-12-21)
+
+
+### Bug Fixes
+
+* version number ([#668](https://github.com/ellite/Wallos/issues/668)) ([683a366](https://github.com/ellite/Wallos/commit/683a3662ff998066f5d8de3be88e4d40d766442a))
+
+## [2.42.1](https://github.com/ellite/Wallos/compare/v2.42.0...v2.42.1) (2024-12-21)
+
+
+### Bug Fixes
+
+* remove debug echo on stats page ([#666](https://github.com/ellite/Wallos/issues/666)) ([d9a2488](https://github.com/ellite/Wallos/commit/d9a24885ffbbdb3c08d9015804eea8cb0fea6cea))
+
+## [2.42.0](https://github.com/ellite/Wallos/compare/v2.41.0...v2.42.0) (2024-12-21)
+
+
+### Features
+
+* add total monthly cost trend graph to the statistics page ([e7185f9](https://github.com/ellite/Wallos/commit/e7185f92578b3103d097b12b8c4313635f263d9f))
+* allow email notifications without authentication ([e7185f9](https://github.com/ellite/Wallos/commit/e7185f92578b3103d097b12b8c4313635f263d9f))
+
+
+### Bug Fixes
+
+* don't update next payment date for disabled subscriptions ([e7185f9](https://github.com/ellite/Wallos/commit/e7185f92578b3103d097b12b8c4313635f263d9f))
+* xss security vulnerability with the avatar selection ([e7185f9](https://github.com/ellite/Wallos/commit/e7185f92578b3103d097b12b8c4313635f263d9f))
+
+## [2.41.0](https://github.com/ellite/Wallos/compare/v2.40.0...v2.41.0) (2024-12-11)
+
+
+### Features
+
+* add payment cycle to csv/json export ([5e6bc90](https://github.com/ellite/Wallos/commit/5e6bc903bcd95580ed58f744977d92c6330b3d9f))
+* run db migration after importing db ([5e6bc90](https://github.com/ellite/Wallos/commit/5e6bc903bcd95580ed58f744977d92c6330b3d9f))
+* run db migration after restoring database ([5e6bc90](https://github.com/ellite/Wallos/commit/5e6bc903bcd95580ed58f744977d92c6330b3d9f))
+* store weekly the total yearly cost of subscriptions ([5e6bc90](https://github.com/ellite/Wallos/commit/5e6bc903bcd95580ed58f744977d92c6330b3d9f))
+
+
+### Bug Fixes
+
+* double encoding in statistics labels ([5e6bc90](https://github.com/ellite/Wallos/commit/5e6bc903bcd95580ed58f744977d92c6330b3d9f))
+
+## [2.40.0](https://github.com/ellite/Wallos/compare/v2.39.1...v2.40.0) (2024-12-10)
+
+
+### Features
+
+* add dutch translation ([#655](https://github.com/ellite/Wallos/issues/655)) ([b5a9880](https://github.com/ellite/Wallos/commit/b5a98806d1f453180ce15724fa198d248177e488))
+
+## [2.39.1](https://github.com/ellite/Wallos/compare/v2.39.0...v2.39.1) (2024-12-06)
+
+
+### Bug Fixes
+
+* svg error on calendar page ([#650](https://github.com/ellite/Wallos/issues/650)) ([8ba79c0](https://github.com/ellite/Wallos/commit/8ba79c0725815c6de8458c74961bbdf23a7d3e9d))
+
+## [2.39.0](https://github.com/ellite/Wallos/compare/v2.38.3...v2.39.0) (2024-12-06)
+
+
+### Features
+
+* add icalendar subscription ([f5ddbff](https://github.com/ellite/Wallos/commit/f5ddbff0c1e0be676604390101c56c04c778f56a))
+
+## [2.38.3](https://github.com/ellite/Wallos/compare/v2.38.2...v2.38.3) (2024-12-06)
+
+
+### Bug Fixes
+
+* vulnerability on the restore database endpoints ([3b2de8b](https://github.com/ellite/Wallos/commit/3b2de8b7c22090afdf7115c25fd8b497a5626ea3))
+
+## [2.38.2](https://github.com/ellite/Wallos/compare/v2.38.1...v2.38.2) (2024-11-19)
+
+
+### Bug Fixes
+
+* logo search positioned below other elements ([#637](https://github.com/ellite/Wallos/issues/637)) ([72f7e57](https://github.com/ellite/Wallos/commit/72f7e5791423c45f910a791b20aafba301d0172f))
+
+## [2.38.1](https://github.com/ellite/Wallos/compare/v2.38.0...v2.38.1) (2024-11-17)
+
+
+### Bug Fixes
+
+* bug introduced on 2.38.0 on the subscriptions dashboard ([#634](https://github.com/ellite/Wallos/issues/634)) ([f63c543](https://github.com/ellite/Wallos/commit/f63c543cdd7512b216004db3b279884dbda87ce4))
+
+## [2.38.0](https://github.com/ellite/Wallos/compare/v2.37.1...v2.38.0) (2024-11-17)
+
+
+### Features
+
+* add option for manual/automatic renewals ([6e44a26](https://github.com/ellite/Wallos/commit/6e44a26703486d0ba30ee6ae8d3c46bfc3c6630a))
+* add some leeway for totp codes ([6e44a26](https://github.com/ellite/Wallos/commit/6e44a26703486d0ba30ee6ae8d3c46bfc3c6630a))
+* add start date to subscriptions ([6e44a26](https://github.com/ellite/Wallos/commit/6e44a26703486d0ba30ee6ae8d3c46bfc3c6630a))
+
+
+### Bug Fixes
+
+* layout issue with subscriptions list during search ([6e44a26](https://github.com/ellite/Wallos/commit/6e44a26703486d0ba30ee6ae8d3c46bfc3c6630a))
+
+## [2.37.1](https://github.com/ellite/Wallos/compare/v2.37.0...v2.37.1) (2024-11-15)
+
+
+### Bug Fixes
+
+* version mismatch ([#627](https://github.com/ellite/Wallos/issues/627)) ([c4a9b16](https://github.com/ellite/Wallos/commit/c4a9b1627fbc7278398bf2d8bf7cae2934d349ca))
+
+## [2.37.0](https://github.com/ellite/Wallos/compare/v2.36.2...v2.37.0) (2024-11-15)
+
+
+### Features
+
+* add monthly statistics to the calendar page ([f085f8a](https://github.com/ellite/Wallos/commit/f085f8adece3af2548858f665db16d4843d3e622))
+
+
+### Bug Fixes
+
+* notifications being sent on the wrong day ([f085f8a](https://github.com/ellite/Wallos/commit/f085f8adece3af2548858f665db16d4843d3e622))
+
+## [2.36.2](https://github.com/ellite/Wallos/compare/v2.36.1...v2.36.2) (2024-11-03)
+
+
+### Bug Fixes
+
+* only show swipe hint on mobile screens ([#612](https://github.com/ellite/Wallos/issues/612)) ([bd5e351](https://github.com/ellite/Wallos/commit/bd5e3511829a798ab47ca5e9c9d080aae45ae1a0))
+
+## [2.36.1](https://github.com/ellite/Wallos/compare/v2.36.0...v2.36.1) (2024-11-03)
+
+
+### Bug Fixes
+
+* version number ([#610](https://github.com/ellite/Wallos/issues/610)) ([4bd40f1](https://github.com/ellite/Wallos/commit/4bd40f1c561e979322375b95aeccccd18c4780fd))
+
+## [2.36.0](https://github.com/ellite/Wallos/compare/v2.35.0...v2.36.0) (2024-11-03)
+
+
+### Features
+
+* add hint for mobile swipe action ([#608](https://github.com/ellite/Wallos/issues/608)) ([49666f8](https://github.com/ellite/Wallos/commit/49666f867cdbaa4d4c0c1551d0b4b3023830606a))
+
+## [2.35.0](https://github.com/ellite/Wallos/compare/v2.34.0...v2.35.0) (2024-11-01)
+
+
+### Features
+
+* new menu icons ([28444ab](https://github.com/ellite/Wallos/commit/28444abef1cee338e41e57cbf6f13666b917bbde))
+* swipe subscription for actions on the experimental mobile navigation ([28444ab](https://github.com/ellite/Wallos/commit/28444abef1cee338e41e57cbf6f13666b917bbde))
+
+## [2.34.0](https://github.com/ellite/Wallos/compare/v2.33.1...v2.34.0) (2024-10-31)
+
+
+### Features
+
+* link version update banner to github release ([f007adf](https://github.com/ellite/Wallos/commit/f007adf9658eb1fd095c2716e4146130535f6cb7))
+* only show filters that are actually used ([f007adf](https://github.com/ellite/Wallos/commit/f007adf9658eb1fd095c2716e4146130535f6cb7))
+
+
+### Bug Fixes
+
+* filters for categories and payment method respect order from settings ([f007adf](https://github.com/ellite/Wallos/commit/f007adf9658eb1fd095c2716e4146130535f6cb7))
+
+## [2.33.1](https://github.com/ellite/Wallos/compare/v2.33.0...v2.33.1) (2024-10-30)
+
+
+### Bug Fixes
+
+* improve localization ([6480f87](https://github.com/ellite/Wallos/commit/6480f8744094d5ce0f05d7d155925540ac73b156))
+* layout issue on the settings page ([#598](https://github.com/ellite/Wallos/issues/598)) ([6480f87](https://github.com/ellite/Wallos/commit/6480f8744094d5ce0f05d7d155925540ac73b156))
+
+## [2.33.0](https://github.com/ellite/Wallos/compare/v2.32.0...v2.33.0) (2024-10-29)
+
+
+### Features
+
+* replacement for disabled subscriptions, to more accurately calculate savings ([5c92528](https://github.com/ellite/Wallos/commit/5c9252880837a7886c903ddc7ae92c8fed29b452))
+
+## [2.32.0](https://github.com/ellite/Wallos/compare/v2.31.1...v2.32.0) (2024-10-27)
+
+
+### Features
+
+* settings to allow to ignore certificates for some notification methods ([2a0e665](https://github.com/ellite/Wallos/commit/2a0e665e77eca804fa70dafc1a3a0010eb9da270))
+
+## [2.31.1](https://github.com/ellite/Wallos/compare/v2.31.0...v2.31.1) (2024-10-25)
+
+
+### Bug Fixes
+
+* add missing {{days_until}} variable to string version of the webhook ([ebc7b83](https://github.com/ellite/Wallos/commit/ebc7b83e9a0a32aecf3b1aa933408bf9b6baea3a))
+* display actual error message when email test fails ([ebc7b83](https://github.com/ellite/Wallos/commit/ebc7b83e9a0a32aecf3b1aa933408bf9b6baea3a))
+
+## [2.31.0](https://github.com/ellite/Wallos/compare/v2.30.1...v2.31.0) (2024-10-22)
+
+
+### Features
+
+* handle webhook payload as string if it is not a json object ([#583](https://github.com/ellite/Wallos/issues/583)) ([ee834d6](https://github.com/ellite/Wallos/commit/ee834d6198fa3315facd23a734655adf391bb736))
+
+## [2.30.1](https://github.com/ellite/Wallos/compare/v2.30.0...v2.30.1) (2024-10-14)
+
+
+### Bug Fixes
+
+* verify correct path before creating logos folder ([782ebcd](https://github.com/ellite/Wallos/commit/782ebcd64fc947ea82eabaac6bc26a32676271a1))
+
+## [2.30.0](https://github.com/ellite/Wallos/compare/v2.29.2...v2.30.0) (2024-10-13)
+
+
+### Features
+
+* add vietnamese translation ([#573](https://github.com/ellite/Wallos/issues/573)) ([45ff10f](https://github.com/ellite/Wallos/commit/45ff10f953f4af681252ed4d77c32b375f9c396c))
+
+## [2.29.2](https://github.com/ellite/Wallos/compare/v2.29.1...v2.29.2) (2024-10-11)
+
+
+### Bug Fixes
+
+* xss issue on the dashboard ([#568](https://github.com/ellite/Wallos/issues/568)) ([e642129](https://github.com/ellite/Wallos/commit/e6421296aa708b02c468b10e3c9d0f28012c1282))
+
+## [2.29.1](https://github.com/ellite/Wallos/compare/v2.29.0...v2.29.1) (2024-10-11)
+
+
+### Bug Fixes
+
+* mysql injection vulnerability ([3d6a8c3](https://github.com/ellite/Wallos/commit/3d6a8c340843230eff97b459e85efbea55aac01f))
+* new profile page not being cached by service worker ([3d6a8c3](https://github.com/ellite/Wallos/commit/3d6a8c340843230eff97b459e85efbea55aac01f))
+
 ## [2.29.0](https://github.com/ellite/Wallos/compare/v2.28.0...v2.29.0) (2024-10-09)
 
 

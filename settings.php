@@ -10,7 +10,7 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
     $currencyId = $row['id'];
     $currencies[$currencyId] = $row;
 }
-$userData['currency_symbol'] = "€";
+$userData['currency_symbol'] = $currencies[$main_currency]['symbol'];
 
 ?>
 
@@ -22,7 +22,7 @@ $userData['currency_symbol'] = "€";
     }
 </style>
 <section class="contain settings">
-    
+
     <section class="account-section">
         <header>
             <h2><?= translate('monthly_budget', $i18n) ?></h2>
@@ -233,6 +233,7 @@ $userData['currency_symbol'] = "€";
         $notificationsNtfy['host'] = $row['host'];
         $notificationsNtfy['topic'] = $row['topic'];
         $notificationsNtfy['headers'] = $row['headers'];
+        $notificationsNtfy['ignore_ssl'] = $row['ignore_ssl'];
         $rowCount++;
     }
 
@@ -241,6 +242,7 @@ $userData['currency_symbol'] = "€";
         $notificationsNtfy['host'] = "";
         $notificationsNtfy['topic'] = "";
         $notificationsNtfy['headers'] = "";
+        $notificationsNtfy['ignore_ssl'] = 0;
     }
 
     // Webhook notifications
@@ -256,6 +258,7 @@ $userData['currency_symbol'] = "€";
         $notificationsWebhook['headers'] = $row['headers'];
         $notificationsWebhook['payload'] = $row['payload'];
         $notificationsWebhook['iterator'] = $row['iterator'];
+        $notificationsWebhook['ignore_ssl'] = $row['ignore_ssl'];
         $rowCount++;
     }
 
@@ -283,6 +286,7 @@ $userData['currency_symbol'] = "€";
     ]
 
 }';
+        $notificationsWebhook['ignore_ssl'] = 0;
     }
 
     // Gotify notifications
@@ -296,6 +300,7 @@ $userData['currency_symbol'] = "€";
         $notificationsGotify['enabled'] = $row['enabled'];
         $notificationsGotify['url'] = $row['url'];
         $notificationsGotify['token'] = $row['token'];
+        $notificationsGotify['ignore_ssl'] = $row['ignore_ssl'];
         $rowCount++;
     }
 
@@ -303,6 +308,7 @@ $userData['currency_symbol'] = "€";
         $notificationsGotify['enabled'] = 0;
         $notificationsGotify['url'] = "";
         $notificationsGotify['token'] = "";
+        $notificationsGotify['ignore_ssl'] = 0;
     }
 
     ?>
@@ -316,13 +322,18 @@ $userData['currency_symbol'] = "€";
                 <label for="days"><?= translate('notify_me', $i18n) ?>:</label>
                 <div class="form-group-inline">
                     <select name="days" id="days">
+                        <option value="0" <?= $notifications['days'] == 0 ? "selected" : "" ?>>
+                            <?= translate('on_due_date', $i18n) ?>
+                        </option>
+                        <option value="1" <?= $notifications['days'] == 1 ? "selected" : "" ?>>
+                            1 <?= translate('day_before', $i18n) ?>
+                        </option>
                         <?php
-                        for ($i = 1; $i <= 7; $i++) {
-                            $dayText = $i > 1 ? translate('days_before', $i18n) : translate('day_before', $i18n);
+                        for ($i = 2; $i <= 7; $i++) {
                             $selected = $i == $notifications['days'] ? "selected" : "";
                             ?>
                             <option value="<?= $i ?>" <?= $selected ?>>
-                                <?= $i ?>     <?= $dayText ?>
+                                <?= $i ?>     <?= translate('day_before', $i18n) ?>
                             </option>
                             <?php
                         }
@@ -352,6 +363,11 @@ $userData['currency_symbol'] = "€";
                             class="one-third" value="<?= $notificationsEmail['smtp_port'] ?>" />
                     </div>
                     <div class="form-group-inline">
+                        <div>
+                            <input type="radio" name="encryption" id="encryptionnone" value="none"
+                                <?= $notificationsEmail['encryption'] == "none" ? "checked" : "" ?> />
+                            <label for="encryptionnone"><?= translate('none', $i18n) ?></label>
+                        </div>
                         <div>
                             <input type="radio" name="encryption" id="encryptiontls" value="tls"
                                 <?= $notificationsEmail['encryption'] == "tls" ? "checked" : "" ?> />
@@ -460,6 +476,11 @@ $userData['currency_symbol'] = "€";
                             placeholder="<?= translate('token', $i18n) ?>"
                             value="<?= $notificationsGotify['token'] ?>" />
                     </div>
+                    <div class="form-group-inline">
+                        <input type="checkbox" id="gotifyignoressl" name="gotifyignoressl"
+                            <?= $notificationsGotify['ignore_ssl'] ? "checked" : "" ?>>
+                        <label for="gotifyignoressl"><?= translate('ignore_ssl_errors', $i18n) ?></label>
+                    </div>
                     <div class="buttons">
                         <input type="button" class="secondary-button thin mobile-grow"
                             value="<?= translate('test', $i18n) ?>" id="testNotificationsGotify"
@@ -557,6 +578,11 @@ $userData['currency_symbol'] = "€";
                         <textarea class="thin" name="ntfyheaders" id="ntfyheaders"
                             placeholder="<?= translate('custom_headers', $i18n) ?>"><?= $notificationsNtfy['headers'] ?></textarea>
                     </div>
+                    <div class="form-grpup-inline">
+                        <input type="checkbox" id="ntfyignoressl" name="ntfyignoressl"
+                            <?= $notificationsNtfy['ignore_ssl'] ? "checked" : "" ?>>
+                        <label for="ntfyignoressl"><?= translate('ignore_ssl_errors', $i18n) ?></label>
+                    </div>
                     <div class="buttons">
                         <input type="button" class="secondary-button thin mobile-grow"
                             value="<?= translate('test', $i18n) ?>" id="testNotificationsNtfy"
@@ -606,6 +632,11 @@ $userData['currency_symbol'] = "€";
                         <input type="text" name="webhookiteratorkey" id="webhookiteratorkey"
                             placeholder="<?= translate('webhook_iterator_key', $i18n) ?>"
                             value="<?= $notificationsWebhook['iterator'] ?>" />
+                    </div>
+                    <div class="form-group-inline">
+                        <input type="checkbox" id="webhookignoressl" name="webhookignoressl"
+                            <?= $notificationsWebhook['ignore_ssl'] ? "checked" : "" ?>>
+                        <label for="webhookignoressl"><?= translate('ignore_ssl_errors', $i18n) ?></label>
                     </div>
                     <div class="buttons">
                         <input type="button" class="secondary-button thin mobile-grow"
@@ -1144,6 +1175,25 @@ $userData['currency_symbol'] = "€";
                     <label for="showoriginalprice"><?= translate('show_original_price', $i18n) ?></label>
                 </div>
             </div>
+            <h3><?= translate('experience', $i18n) ?></h3>
+            <div>
+                <div class="form-group-inline">
+                    <input type="checkbox" id="mobilenavigation" name="mobilenavigation"
+                        onChange="setMobileNavigation()" <?php if ($settings['mobile_nav'])
+                            echo 'checked'; ?>>
+                    <label for="mobilenavigation"><?= translate('use_mobile_navigation_bar', $i18n) ?></label>
+                </div>
+                <div class="mobile-nav-image">
+                </div>
+            </div>
+            <div>
+                <div class="form-group-inline">
+                    <input type="checkbox" id="showsubscriptionprogress" name="showsubscriptionprogress"
+                        onChange="setShowSubscriptionProgress()" <?php if ($settings['show_subscription_progress'])
+                            echo 'checked'; ?>>
+                    <label for="showsubscriptionprogress"><?= translate('show_subscription_progress', $i18n) ?></label>
+                </div>
+            </div>
             <h3><?= translate('disabled_subscriptions', $i18n) ?></h3>
             <div>
                 <div class="form-group-inline">
@@ -1175,14 +1225,6 @@ $userData['currency_symbol'] = "€";
                         onChange="setRemoveBackground()" <?php if ($settings['remove_background'])
                             echo 'checked'; ?>>
                     <label for="removebackground"><?= translate('remove_background', $i18n) ?></label>
-                </div>
-            </div>
-            <div>
-                <div class="form-group-inline">
-                    <input type="checkbox" id="mobilenavigation" name="mobilenavigation"
-                        onChange="setMobileNavigation()" <?php if ($settings['mobile_nav'])
-                            echo 'checked'; ?>>
-                    <label for="mobilenavigation"><?= translate('use_mobile_navigation_bar', $i18n) ?></label>
                 </div>
             </div>
         </div>

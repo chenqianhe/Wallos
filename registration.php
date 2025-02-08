@@ -162,6 +162,8 @@ if (isset($_POST['username'])) {
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
     $main_currency = $_POST['main_currency'];
+    $main_currency_index = array_search($main_currency, array_column($currencies, 'code'));
+    $main_currency_id = $currencies[$main_currency_index]['id'];
     $language = $_POST['language'];
     $avatar = "images/avatars/0.svg";
 
@@ -199,7 +201,7 @@ if (isset($_POST['username'])) {
         $stmt->bindValue(':username', $username, SQLITE3_TEXT);
         $stmt->bindValue(':email', $email, SQLITE3_TEXT);
         $stmt->bindValue(':password', $hashedPassword, SQLITE3_TEXT);
-        $stmt->bindValue(':main_currency', 1, SQLITE3_TEXT);
+        $stmt->bindValue(':main_currency', $main_currency_id, SQLITE3_TEXT);
         $stmt->bindValue(':avatar', $avatar, SQLITE3_TEXT);
         $stmt->bindValue(':language', $language, SQLITE3_TEXT);
         $stmt->bindValue(':budget', 0, SQLITE3_INTEGER);
@@ -268,8 +270,8 @@ if (isset($_POST['username'])) {
                 $stmt->execute();
 
                 // Add settings for that user
-                $query = "INSERT INTO settings (dark_theme, monthly_price, convert_currency, remove_background, color_theme, hide_disabled, user_id) 
-                          VALUES (2, 0, 0, 0, 'blue', 0, :user_id)";
+                $query = "INSERT INTO settings (dark_theme, monthly_price, convert_currency, remove_background, color_theme, hide_disabled, user_id, disabled_to_bottom, show_original_price, mobile_nav) 
+                          VALUES (2, 0, 0, 0, 'blue', 0, :user_id, 0, 0, 0)";
                 $stmt = $db->prepare($query);
                 $stmt->bindValue(':user_id', $userId, SQLITE3_INTEGER);
                 $stmt->execute();

@@ -21,10 +21,11 @@ Wallos: Open-Source Personal Subscription Tracker
     - [Docker](#docker-1)
     - [Docker-Compose](#docker-compose)
 - [Usage](#usage)
+- [Screenshots](#screenshots)
+- [API Documentation](#api-documentation)
 - [Contributing](#contributing)
   - [Contributors](#contributors)
   - [Translations](#translations)
-- [Screenshots](#screenshots)
 - [License](#license)
 - [Links](#links)
 
@@ -97,6 +98,7 @@ See instructions to run Wallos below.
 */2 * * * * php /var/www/html/endpoints/cronjobs/sendverificationemails.php >> /var/log/cron/sendverificationemail.log 2>&1
 */2 * * * * php /var/www/html/endpoints/cronjobs/sendresetpasswordemails.php >> /var/log/cron/sendresetpasswordemails.log 2>&1
 0 */6 * * * php /var/www/html/endpoints/cronjobs/checkforupdates.php >> /var/log/cron/checkforupdates.log 2>&1
+30 1 * * 1 php /var/www/html/endpoints/cronjobs/storetotalyearlycost.php >> /var/log/cron/storetotalyearlycost.log 2>&1
 ```
 
 5. If your web root is not `/var/www/html/` adjust the cronjobs above accordingly.
@@ -156,6 +158,10 @@ If you want to trigger an Update of the exchange rates, change your main currenc
 
 ![Screenshot](screenshots/wallos-dashboard-mobile-light.png) ![Screenshot](screenshots/wallos-dashboard-mobile-dark.png)
 
+## API Documentation
+
+Wallos provides a comprehensive API that allows you to interact with the application programmatically. The API documentation is available at [https://api.wallosapp.com/](https://api.wallosapp.com/).
+
 ## Contributing
 
 Feel free to open Pull requests with bug fixes and features. I'll do my best to keep an eye on those.  
@@ -171,10 +177,10 @@ I welcome contributions from the community and look forward to working with you 
 ### Translations
 
 If you want to contribute with a translation of wallos:
-- Add your language code to `includes/i18n/languages.php` in the format `"en" => "English"`. Please use the original language name and not the english translation.
-- Create a copy of the file `includes/i18n/en.php` and rename it to the language code you used above. Example: pt.php for "pt" => "Português".
+- Add your language code to `includes/i18n/languages.php` in the format `"en" => ["name" => "English", "dir" => "ltr"],`. Please use the original language name and not the english translation.
+- Create a copy of the file `includes/i18n/en.php` and rename it to the language code you used above. Example: pt.php for "pt" => ["name" => "Português", "dir" => "ltr"],.
 - Translate all the values on the language file to the new language. (Incomplete translations will not be accepted).
-- Create a copy of the file `scripts/i18n/en.js` and rename it to the language code you used above. Example: pt.js for "pt" => "Português".
+- Create a copy of the file `scripts/i18n/en.js` and rename it to the language code you used above. Example: pt.js for "pt" => ["name" => "Português", "dir" => "ltr"],.
 - Translate all the values on the language file to the new language. (Incomplete translations will not be accepted).
 
 ## License

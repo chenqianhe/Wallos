@@ -4,6 +4,7 @@ self.addEventListener('install', function (event) {
             const urlsToCache = [
                 '.',
                 'index.php',
+                'profile.php',
                 'calendar.php',
                 'settings.php',
                 'stats.php',
@@ -54,6 +55,7 @@ self.addEventListener('install', function (event) {
                 'scripts/i18n/sr_lat.js',
                 'scripts/i18n/sr.js',
                 'scripts/i18n/tr.js',
+                'scripts/i18n/vi.js',
                 'scripts/i18n/zh_cn.js',
                 'scripts/i18n/zh_tw.js',
                 'scripts/i18n/getlang.js',
@@ -69,6 +71,8 @@ self.addEventListener('install', function (event) {
                 'images/siteicons/wallos.png',
                 'images/siteicons/walloswhite.png',
                 'images/siteimages/empty.png',
+                'images/siteimages/mobilenav.png',
+                'images/siteimages/mobilenavdark.png',
                 'images/avatars/1.svg',
                 'images/avatars/2.svg',
                 'images/avatars/3.svg',
@@ -165,7 +169,7 @@ self.addEventListener('fetch', function (event) {
 self.addEventListener('fetch', event => {
     const url = new URL(event.request.url);
     // Check if the request is for an image in the logos directory
-    if (url.pathname.startsWith('/images/uploads/logos/')) {
+    if (url.pathname.includes('images/uploads/logos')) {
         event.respondWith(
             caches.match(event.request).then(response => {
                 return response || fetch(event.request).then(response => {

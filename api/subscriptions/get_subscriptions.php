@@ -9,7 +9,7 @@ It receives the following parameters:
 - disabled_to_bottom: whether to sort the inactive subscriptions to the bottom (boolean) default false.
 - sort: the sorting method (string) default next_payment ['name', 'id', 'next_payment', 'price', 'payer_user_id', 'category_id', 'payment_method_id', 'inactive', 'alphanumeric'].
 - convert_currency: whether to convert to the main currency (boolean) default false.
-- apiKey: the API key of the user.
+- api_key: the API key of the user.
 
 It returns a JSON object with the following properties:
 - success: whether the request was successful (boolean).
@@ -28,9 +28,11 @@ Example response:
       "logo": "example.png",
       "price": 10.00,
       "currency_id": 1,
+      "start_date": "2024-09-01",
       "next_payment": "2024-09-01",
       "cycle": 1,
       "frequency": 1,
+      "auto_renew": 1,
       "notes": "Example note",
       "payment_method_id": 1,
       "payer_user_id": 1,
@@ -52,9 +54,11 @@ Example response:
       "logo": "another.png",
       "price": 15.00,
       "currency_id": 2,
+      "start_date": "2024-09-02",
       "next_payment": "2024-09-02",
       "cycle": 1,
       "frequency": 1,
+      "auto_renew": 0,
       "notes": "",
       "payment_method_id": 2,
       "payer_user_id": 2,
@@ -69,6 +73,7 @@ Example response:
       "category_name": "Entertainment",
       "payer_user_name": "Jane Doe",
       "payment_method_name": "Credit Card"
+      "replacement_subscription_id": 1
     }
   ],
   "notes": []
@@ -300,7 +305,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" || $_SERVER["REQUEST_METHOD"] === "GET
 
         $subscriptionsToReturn[] = $subscriptionToReturn;
     }
-
 
     $response = [
         "success" => true,

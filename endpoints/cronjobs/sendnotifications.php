@@ -20,6 +20,16 @@ $query = "SELECT id, username FROM user";
 $stmt = $db->prepare($query);
 $usersToNotify = $stmt->execute();
 
+function getDaysText($days) {
+    if ($days == 0) {
+        return "Today";
+    } elseif ($days == 1) {
+        return "Tomorrow";
+    } else {
+        return "In " . $days . " days";
+    }
+}
+
 while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
     $userId = $userToNotify['id'];
     if (php_sapi_name() !== 'cli') {
@@ -88,6 +98,7 @@ while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
         $gotifyNotificationsEnabled = $row['enabled'];
         $gotify['serverUrl'] = $row["url"];
         $gotify['appToken'] = $row["token"];
+        $gotify['ignore_ssl'] = $row["ignore_ssl"];
     }
 
     // Check if Telegram notifications are enabled and get the settings
@@ -125,6 +136,7 @@ while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
         $ntfy['host'] = $row["host"];
         $ntfy['topic'] = $row["topic"];
         $ntfy['headers'] = $row["headers"];
+        $ntfy['ignore_ssl'] = $row["ignore_ssl"];
     }
 
     // Check if Webhook notifications are enabled and get the settings
@@ -147,6 +159,7 @@ while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
                 $webhook['iterator'] = "{{" . $webhook['iterator'] . "}}";
             }
         }
+        $webhook['ignore_ssl'] = $row["ignore_ssl"];
     }
 
     $notificationsEnabled = $emailNotificationsEnabled || $gotifyNotificationsEnabled || $telegramNotificationsEnabled ||
@@ -204,14 +217,22 @@ while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
         $i = 0;
         $currentDate = new DateTime('now');
         while ($rowSubscription = $resultSubscriptions->fetchArray(SQLITE3_ASSOC)) {
-            if ($rowSubscription['notify_days_before'] !== 0) {
+            if ($rowSubscription['notify_days_before'] !== -1) {
                 $daysToCompare = $rowSubscription['notify_days_before'];
             } else {
                 $daysToCompare = $days;
             }
             $nextPaymentDate = new DateTime($rowSubscription['next_payment']);
-            $difference = $currentDate->diff($nextPaymentDate)->days + 1;
+
+            $difference = $currentDate->diff($nextPaymentDate)->days;
+            if ($nextPaymentDate > $currentDate) {
+                $difference += 1;
+            }
+
             if ($difference === $daysToCompare) {
+                echo "Next payment date: " . $nextPaymentDate->format('Y-m-d') . "<br />";
+                echo "Current date: " . $currentDate->format('Y-m-d') . "<br />";
+                echo "Difference: " . $difference . "<br />";
                 $notify[$rowSubscription['payer_user_id']][$i]['name'] = $rowSubscription['name'];
                 $notify[$rowSubscription['payer_user_id']][$i]['price'] = $rowSubscription['price'] . $currencies[$rowSubscription['currency_id']]['symbol'];
                 $notify[$rowSubscription['payer_user_id']][$i]['currency'] = $currencies[$rowSubscription['currency_id']]['name'];
@@ -241,19 +262,25 @@ while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
                     $message = "The following subscriptions are up for renewal:\n";
 
                     foreach ($perUser as $subscription) {
-                        $dayText = $subscription['days'] == 1 ? "Tomorrow" : "In " . $subscription['days'] . " days";
+                        $dayText = getDaysText($subscription['days']);
                         $message .= $subscription['name'] . " for " . $subscription['price'] . " (" . $dayText . ")\n";
                     }
+
+                    $smtpAuth = (isset($email["smtpUsername"]) && $email["smtpUsername"] != "") || (isset($email["smtpPassword"]) && $email["smtpPassword"] != "");
 
                     $mail = new PHPMailer(true);
                     $mail->CharSet = "UTF-8";
                     $mail->isSMTP();
 
                     $mail->Host = $email['smtpAddress'];
-                    $mail->SMTPAuth = true;
-                    $mail->Username = $email['smtpUsername'];
-                    $mail->Password = $email['smtpPassword'];
-                    $mail->SMTPSecure = $email['encryption'];
+                    $mail->SMTPAuth = $smtpAuth;
+                    if ($smtpAuth) {
+                        $mail->Username = $email['smtpUsername'];
+                        $mail->Password = $email['smtpPassword'];
+                    }
+                    if ($email['encryption'] != "none") {
+                        $mail->SMTPSecure = $email['encryption'];
+                    }
                     $mail->Port = $email['smtpPort'];
 
                     $stmt = $db->prepare('SELECT * FROM household WHERE id = :userId');
@@ -276,7 +303,7 @@ while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
                             return $value !== $emailaddress;
                         });
 
-                        foreach($list as $value) {
+                        foreach ($list as $value) {
                             $mail->addCC(trim($value));
                         }
                     }
@@ -310,7 +337,7 @@ while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
                     }
 
                     foreach ($perUser as $subscription) {
-                        $dayText = $subscription['days'] == 1 ? "Tomorrow" : "In " . $subscription['days'] . " days";
+                        $dayText = getDaysText($subscription['days']);
                         $message .= $subscription['name'] . " for " . $subscription['price'] . " (" . $dayText . ")\n";
                     }
 
@@ -363,7 +390,7 @@ while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
                     }
 
                     foreach ($perUser as $subscription) {
-                        $dayText = $subscription['days'] == 1 ? "Tomorrow" : "In " . $subscription['days'] . " days";
+                        $dayText = getDaysText($subscription['days']);
                         $message .= $subscription['name'] . " for " . $subscription['price'] . " (" . $dayText . ")\n";
                     }
 
@@ -386,6 +413,11 @@ while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
                             'Content-Length: ' . strlen($data_string)
                         )
                     );
+
+                    if ($gotify['ignore_ssl']) {
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+                    }
 
                     $result = curl_exec($ch);
                     if ($result === false) {
@@ -412,7 +444,7 @@ while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
                     }
 
                     foreach ($perUser as $subscription) {
-                        $dayText = $subscription['days'] == 1 ? "Tomorrow" : "In " . $subscription['days'] . " days";
+                        $dayText = getDaysText($subscription['days']);
                         $message .= $subscription['name'] . " for " . $subscription['price'] . " (" . $dayText . ")\n";
                     }
 
@@ -461,7 +493,7 @@ while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
                     }
 
                     foreach ($perUser as $subscription) {
-                        $dayText = $subscription['days'] == 1 ? "Tomorrow" : "In " . $subscription['days'] . " days";
+                        $dayText = getDaysText($subscription['days']);
                         $message .= $subscription['name'] . " for " . $subscription['price'] . " (" . $dayText . ")\n";
                     }
 
@@ -503,7 +535,7 @@ while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
                     }
 
                     foreach ($perUser as $subscription) {
-                        $dayText = $subscription['days'] == 1 ? "Tomorrow" : "In " . $subscription['days'] . " days";
+                        $dayText = getDaysText($subscription['days']);
                         $message .= $subscription['name'] . " for " . $subscription['price'] . " (" . $dayText . ")\n";
                     }
 
@@ -523,6 +555,11 @@ while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $customheaders);
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
+                    if ($ntfy['ignore_ssl']) {
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+                    }
+
                     $response = curl_exec($ch);
                     curl_close($ch);
 
@@ -536,77 +573,135 @@ while ($userToNotify = $usersToNotify->fetchArray(SQLITE3_ASSOC)) {
 
             // Webhook notifications if enabled
             if ($webhookNotificationsEnabled) {
+
                 // Get webhook payload and turn it into a json object
 
                 $payload = str_replace("{{days_until}}", $days, $webhook['payload']);
 
                 $payload_json = json_decode($payload, true);
 
-                if ($payload_json === null) {
-                    echo "Error parsing payload JSON<br />";
-                    continue;
-                }
+                // If the payload is valid json, iterate the object and replace the placeholders with the subscription data (all subscriptions in one payload)
+                if ($payload_json !== null) {
+                    $subscription_template = $payload_json[$webhook['iterator']];
+                    $subscriptions = [];
 
-                $subscription_template = $payload_json[$webhook['iterator']];
-                $subscriptions = [];
+                    foreach ($notify as $userId => $perUser) {
+                        // Get name of user from household table
+                        $stmt = $db->prepare('SELECT * FROM household WHERE id = :userId');
+                        $stmt->bindValue(':userId', $userId, SQLITE3_INTEGER);
+                        $result = $stmt->execute();
+                        $user = $result->fetchArray(SQLITE3_ASSOC);
 
-                foreach ($notify as $userId => $perUser) {
-                    // Get name of user from household table
-                    $stmt = $db->prepare('SELECT * FROM household WHERE id = :userId');
-                    $stmt->bindValue(':userId', $userId, SQLITE3_INTEGER);
-                    $result = $stmt->execute();
-                    $user = $result->fetchArray(SQLITE3_ASSOC);
-
-                    if ($user['name']) {
-                        $payer = $user['name'];
-                    }
-
-                    foreach ($perUser as $k => $subscription) {
-                        $temp_subscription = $subscription_template[0];
-
-                        foreach ($temp_subscription as $key => $value) {
-                            if (is_string($value)) {
-                                $temp_subscription[$key] = str_replace("{{subscription_name}}", $subscription['name'], $value);
-                                $temp_subscription[$key] = str_replace("{{subscription_price}}", $subscription['price'], $temp_subscription[$key]);
-                                $temp_subscription[$key] = str_replace("{{subscription_currency}}", $subscription['currency'], $temp_subscription[$key]);
-                                $temp_subscription[$key] = str_replace("{{subscription_category}}", $subscription['category'], $temp_subscription[$key]);
-                                $temp_subscription[$key] = str_replace("{{subscription_payer}}", $subscription['payer'], $temp_subscription[$key]);
-                                $temp_subscription[$key] = str_replace("{{subscription_date}}", $subscription['date'], $temp_subscription[$key]);
-                                $temp_subscription[$key] = str_replace("{{subscription_days_until_payment}}", $subscription['days'], $temp_subscription[$key]);
-                                $temp_subscription[$key] = str_replace("{{subscription_url}}", $subscription['url'], $temp_subscription[$key]);
-                                $temp_subscription[$key] = str_replace("{{subscription_notes}}", $subscription['notes'], $temp_subscription[$key]);
-                            }
+                        if ($user['name']) {
+                            $payer = $user['name'];
                         }
-                        $subscriptions[] = $temp_subscription;
 
+                        foreach ($perUser as $k => $subscription) {
+                            $temp_subscription = $subscription_template[0];
+
+                            foreach ($temp_subscription as $key => $value) {
+                                if (is_string($value)) {
+                                    $temp_subscription[$key] = str_replace("{{subscription_name}}", $subscription['name'], $value);
+                                    $temp_subscription[$key] = str_replace("{{subscription_price}}", $subscription['price'], $temp_subscription[$key]);
+                                    $temp_subscription[$key] = str_replace("{{subscription_currency}}", $subscription['currency'], $temp_subscription[$key]);
+                                    $temp_subscription[$key] = str_replace("{{subscription_category}}", $subscription['category'], $temp_subscription[$key]);
+                                    $temp_subscription[$key] = str_replace("{{subscription_payer}}", $subscription['payer'], $temp_subscription[$key]);
+                                    $temp_subscription[$key] = str_replace("{{subscription_date}}", $subscription['date'], $temp_subscription[$key]);
+                                    $temp_subscription[$key] = str_replace("{{subscription_days_until_payment}}", $subscription['days'], $temp_subscription[$key]);
+                                    $temp_subscription[$key] = str_replace("{{subscription_url}}", $subscription['url'], $temp_subscription[$key]);
+                                    $temp_subscription[$key] = str_replace("{{subscription_notes}}", $subscription['notes'], $temp_subscription[$key]);
+                                }
+                            }
+                            $subscriptions[] = $temp_subscription;
+
+                        }
+                    }
+
+                    // remove {{ and }} from the iterator
+                    $payload_iterator = str_replace("{{", "", $webhook['iterator']);
+                    $payload_iterator = str_replace("}}", "", $payload_iterator);
+
+                    $payload_json["{{subscriptions}}"] = $subscriptions;
+                    $payload_json[$payload_iterator] = $subscriptions;
+                    unset($payload_json["{{subscriptions}}"]);
+
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, $webhook['url']);
+                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $webhook['request_method']);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload_json));
+                    if (!empty($webhook['headers'])) {
+                        $customheaders = preg_split("/\r\n|\n|\r/", $webhook['headers']);
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, $customheaders);
+                    }
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                    if ($webhook['ignore_ssl']) {
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+                    }
+
+                    $response = curl_exec($ch);
+                    curl_close($ch);
+
+                    if ($response === false) {
+                        echo "Error sending notifications: " . curl_error($ch) . "<br />";
+                    } else {
+                        echo "Webhook Notifications sent<br />";
                     }
                 }
 
-                // remove {{ and }} from the iterator
-                $payload_iterator = str_replace("{{", "", $webhook['iterator']);
-                $payload_iterator = str_replace("}}", "", $payload_iterator);
 
-                $payload_json["{{subscriptions}}"] = $subscriptions;
-                $payload_json[$payload_iterator] = $subscriptions;
-                unset($payload_json["{{subscriptions}}"]);
-                
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $webhook['url']);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $webhook['request_method']);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload_json));
-                if (!empty($webhook['headers'])) {
-                    $customheaders = preg_split("/\r\n|\n|\r/", $webhook['headers']);
-                    curl_setopt($ch, CURLOPT_HTTPHEADER, $customheaders);
-                }
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                // If the payload is not valid json, send it directly as a string, replacing the placeholders with the subscription data (one notification per subscription)
 
-                $response = curl_exec($ch);
-                curl_close($ch);
+                if ($payload_json === null) {
+                    foreach ($notify as $userId => $perUser) {
+                        // Get name of user from household table
+                        $stmt = $db->prepare('SELECT * FROM household WHERE id = :userId');
+                        $stmt->bindValue(':userId', $userId, SQLITE3_INTEGER);
+                        $result = $stmt->execute();
+                        $user = $result->fetchArray(SQLITE3_ASSOC);
 
-                if ($response === false) {
-                    echo "Error sending notifications: " . curl_error($ch) . "<br />";
-                } else {
-                    echo "Webhook Notifications sent<br />";
+                        if ($user['name']) {
+                            $payer = $user['name'];
+                        }
+
+                        foreach ($perUser as $k => $subscription) {
+                            // Ensure the payload is reset for each subscription
+                            $payload = $webhook['payload'];
+                            $payload = str_replace("{{days_until}}", $days, $payload);
+                            $payload = str_replace("{{subscription_name}}", $subscription['name'], $payload);
+                            $payload = str_replace("{{subscription_price}}", $subscription['price'], $payload);
+                            $payload = str_replace("{{subscription_currency}}", $subscription['currency'], $payload);
+                            $payload = str_replace("{{subscription_category}}", $subscription['category'], $payload);
+                            $payload = str_replace("{{subscription_payer}}", $payer, $payload); // Use $payer instead of $subscription['payer']
+                            $payload = str_replace("{{subscription_date}}", $subscription['date'], $payload);
+                            $payload = str_replace("{{subscription_days_until_payment}}", $subscription['days'], $payload);
+                            $payload = str_replace("{{subscription_url}}", $subscription['url'], $payload);
+                            $payload = str_replace("{{subscription_notes}}", $subscription['notes'], $payload);
+
+                            $ch = curl_init();
+                            curl_setopt($ch, CURLOPT_URL, $webhook['url']);
+                            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $webhook['request_method']);
+                            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+                            if (!empty($webhook['headers'])) {
+                                $customheaders = preg_split("/\r\n|\n|\r/", $webhook['headers']);
+                                curl_setopt($ch, CURLOPT_HTTPHEADER, $customheaders);
+                            }
+                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                            $response = curl_exec($ch);
+                            curl_close($ch);
+
+                            if ($response === false) {
+                                echo "Error sending notifications: " . curl_error($ch) . "<br />";
+                            } else {
+                                echo "Webhook Notification sent <br />";
+                            }
+
+                            // Delay for 200 milliseconds
+                            usleep(500000);
+                        }
+                    }
                 }
 
             }
